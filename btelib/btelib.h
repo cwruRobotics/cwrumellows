@@ -14,7 +14,6 @@
 	#include "WConstants.h"
 #endif
 
-
 class SoftwareSerial;	// forward declaration for the serial library
 
 // Here is the class for the driver functions
@@ -40,11 +39,8 @@ class btelib {
 		String getBlueDeviceName();	// Get the bluetooth device name
 		bool setModuleMode();	// Set the module mode 1=Master, 0=Slave, 2=Slave=Loop
 		byte getModuleMode();	// Gets the module mode (see setModuleMode())
-		
-		
-		
-		
-		int get5();	// Returns int 5
+
+        char readChar();
 
 	private:
 		byte _RxPin;	// Pins used for the serial port
@@ -56,5 +52,7 @@ class btelib {
 		
 		bool waitForResponse(String messageToWaitFor, bool caseSensitive, bool useTimeout);
 };
+
+#include "btelib.cpp"
 
 #endif

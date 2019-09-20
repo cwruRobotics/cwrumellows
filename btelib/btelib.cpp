@@ -41,7 +41,7 @@ bool btelib::waitForResponse(String messageToWaitFor, bool caseSensitive, bool u
 	char currentChar = ' ';
 
 	// Get the length of our string
-	stringLength = messageToWaitFor.length();
+	int stringLength = messageToWaitFor.length();
 	
 	if (!caseSensitive)
 		messageToWaitFor.toUpperCase();
@@ -59,7 +59,7 @@ bool btelib::waitForResponse(String messageToWaitFor, bool caseSensitive, bool u
 		
 		// If we don't case about the case, ignore it.
 		if (!caseSensitive)
-			currentChar.toUpperCase();
+			currentChar & 0x5F;
 		
 		// If the current character that we are looking at is the next one in the string that 
 		//   we are waiting for, incriment the value, otherwise reset it.
@@ -81,9 +81,4 @@ char btelib::readChar() {
     }
     
     return data;
-}
-
-// return the value 5
-int btelib::get5() {
-	return 5;
 }

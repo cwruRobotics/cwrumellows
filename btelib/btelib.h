@@ -44,8 +44,6 @@ class btelib {
 		
 		
 		
-		int get5();	// Returns int 5
-
 	private:
 		byte _RxPin;	// Pins used for the serial port
 		byte _TxPin;

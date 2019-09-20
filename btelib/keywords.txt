@@ -1,0 +1,14 @@
+# -----------------------------------------
+# Syntax colouring for RsbLib demo library
+# -----------------------------------------
+
+# Datatypes (such as objects)
+btelib	KEYWORD1
+
+#Methods / functions
+begin 	KEYWORD2
+get5	KEYWORD2
+
+# Constants
+
+

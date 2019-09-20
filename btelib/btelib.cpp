@@ -73,6 +73,15 @@ bool btelib::waitForResponse(String messageToWaitFor, bool caseSensitive, bool u
 	return true;
 }
 
+char btelib::readChar() {
+    char data = bteSerial->read(); 
+    
+    if (data == -1) {
+        data = '\x00';
+    }
+    
+    return data;
+}
 
 // return the value 5
 int btelib::get5() {

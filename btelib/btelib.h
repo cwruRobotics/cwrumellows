@@ -37,9 +37,9 @@ class btelib {
 		String getModuleAddress();	// Returns the address of the module
 		bool setModuleName(String moduleName);	// Set the name of the module
 		String getModuleName();	// Get the name of the module
+        
 		
-		
-		
+		char getChar();
 		
 		int get5();	// Returns int 5
 

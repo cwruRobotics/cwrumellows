@@ -37,9 +37,12 @@ class btelib {
 		String getModuleAddress();	// Returns the address of the module
 		bool setModuleName(String moduleName);	// Set the name of the module
 		String getModuleName();	// Get the name of the module
-        
+		String getBlueDeviceName();	// Get the bluetooth device name
+		bool setModuleMode();	// Set the module mode 1=Master, 0=Slave, 2=Slave=Loop
+		byte getModuleMode();	// Gets the module mode (see setModuleMode())
 		
-		char getChar();
+		
+		
 		
 		int get5();	// Returns int 5
 

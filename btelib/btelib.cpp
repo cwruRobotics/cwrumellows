@@ -9,17 +9,17 @@ btelib::btelib(byte RxPin, byte TxPin) {
 	// Stuff used when initalizing the object goes here
 	_RxPin = RxPin;
 	_TxPin = TxPin;
+	SoftwareSerial bteSerial(_RxPin, _TxPin); // Tell which pins we will be using
 }
 
 // Initialize our object
-void begin(unsigned long baudRate) {
-	bteSerial(_RxPin, _TxPin);	// Tell which pins we will be using
-	bteSerial.begin(9600);	// Start the serial port
+void btelib::begin(unsigned long baudRate) {
+	bteSerial->begin(9600);	// Start the serial port
 }
 
 // Check to make sure the bluetooth module is ready
 bool btelib::areYouThere() {
-	bteSerial.println("AT");
+	bteSerial->println("AT");
 	
 	// Check to see if we got back "OK"
 	return waitForResponse("OK", false, true);
@@ -30,15 +30,15 @@ void btelib::setTimeout(unsigned long timeoutDelayWanted) {
 	btelib::timeoutDelay = timeoutDelayWanted;
 }
 
-unsigned long getTimeout() {
-	return ::timeoutDelay;
+unsigned long btelib::getTimeout() {
+	return timeoutDelay;
 }
 
 bool btelib::waitForResponse(String messageToWaitFor, bool caseSensitive, bool useTimeout) {
 	
 	unsigned long startTime = millis();	// Used for determining the timeout if needed.
 
-	currentChar = ' ';
+	char currentChar = ' ';
 
 	// Get the length of our string
 	stringLength = messageToWaitFor.length();
@@ -50,7 +50,7 @@ bool btelib::waitForResponse(String messageToWaitFor, bool caseSensitive, bool u
 	while (j != stringLength) {
 		
 		do { 
-			currentChar = bteSerial.read();
+			currentChar = bteSerial->read();
 			
 			// Now make sure that we do not run over the timeout delay if we are using it
 			if (useTimeout && ((millis() - startTime) >= timeoutDelay) )

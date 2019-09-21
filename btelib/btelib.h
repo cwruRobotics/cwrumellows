@@ -59,9 +59,9 @@ class btelib {
         };
 
         bool waitForResponse(String messageToWaitFor, bool caseSensitive, bool useTimeout);
-        const String OK_TEXT = "OK";
 
     private:
+        static String OK_TEXT = "OK";
         byte _RxPin;	// Pins used for the serial port
         byte _TxPin;
         SoftwareSerial *bteSerial;	// Name of serial port object

@@ -22,7 +22,7 @@ bool btelib::areYouThere() {
     bteSerial->println("AT");
 
     // Check to see if we got back "OK"
-    return waitForResponse("OK", false, true);
+    return waitForResponse(btelib::OK_TEXT, false, true);
 }
 
 // Set the timeout delay to X mS
@@ -37,32 +37,34 @@ unsigned long btelib::getTimeout() {
 
 // Software Reset of the module
 void resetModule() {
-    writeln("AT+RESET");
-    btelib::waitForResponse(OK_TEXT, false, true);
+    btelib::writeln("AT+RESET", true);
+    btelib::waitForResponse(btelib::OK_TEXT, false, true);
 }
 
 // Get the firmware Version
 String getFirmVer() {
     btelib::writeln("AT+VERSION");
-    return btelib::readln().remove(0.9);   //CHECK THIS----------------------------------------------------
+    return btelib::readln(true).remove(0.9);   //CHECK THIS----------------------------------------------------
 }
 
 // Set the name of the module
 bool setModuleName(String moduleName) {
-    btelib::writeln("AT+NAME" + moduleName);
-    return btelib::waitForResponse(OK_TEXT, false, true);
+    btelib::writeln("AT+NAME" + moduleName, false);
+    return btelib::waitForResponse(btelib::OK_TEXT, false, true);
 }
 
 // Get the name of the module
 String getModuleName() {
     btelib::writeln("AT+NAME");
-    return btelib::readln().remove(0,6);
+    return btelib::readln(true).remove(0,6);
 }
 
 // Get the state of the module
 byte getState() {
     btelib::writeln("AT+STATE");
-    return btelib::readln().remove(0,7);
+    String myString = btelib::readln(true);
+    char myChar = myString.charAt(8);
+    return (byte)myChar.toInt();
 }
 
 // Wait for a response from the module
@@ -142,11 +144,13 @@ String btelib::readln(bool useTimeout) {
 
 // Send a character to the module
 void btelib::writeChar(char characterToSend) {
-    bteSerial->print(char);
+    bteSerial->print(characterToSend);
 }
 
 // Send a string to the module
 void btelib::writeln(String characterString, bool waitForOK) {
     bteSerial->println(characterString);
+    if (waitForOK)
+        btelib::waitForResponse(btelib::OK_TEXT, false, true);
 }
 

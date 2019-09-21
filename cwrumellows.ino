@@ -1,7 +1,7 @@
-//#include "btelib/btelib.h"
+#include "btelib/btelib.h"
 #include <Servo.h>
 
-//btelib *bluetoothConnection;
+btelib bluetoothConnection(2, 3); //Rx pin, Tx pin
 
 enum BUTTONS {
     TOP = 'A',
@@ -21,13 +21,12 @@ Servo turntableServo;
 
 void setup() {
     turntableServo.attach(9); //Pin 9????
-    
-//    btelib bluetoothConnection(2, 3); //Rx pin, Tx pin
+
+    bluetoothConnection.begin(9600);
 }
 
 void loop() {
-//    char input = bluetoothConnection->readChar();
-    char input = 'h';
+    char input = bluetoothConnection.readChar();
 
     if (input == '\x00'){
         //One button are released

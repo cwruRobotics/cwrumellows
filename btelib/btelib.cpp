@@ -22,46 +22,46 @@ bool btelib::areYouThere() {
     bteSerial->println("AT");
 
     // Check to see if we got back "OK"
-    return waitForResponse(btelib::OK_TEXT, false, true);
+    return waitForResponse(OK_TEXT, false, true);
 }
 
 // Set the timeout delay to X mS
 void btelib::setTimeout(unsigned long timeoutDelayWanted) {
-    btelib::timeoutDelay = timeoutDelayWanted;
+    timeoutDelay = timeoutDelayWanted;
 }
 
 unsigned long btelib::getTimeout() {
-    return btelib::timeoutDelay;
+    return timeoutDelay;
 }
 
 
 // Software Reset of the module
-void resetModule() {
-    btelib::writeln("AT+RESET", true);
-    btelib::waitForResponse(btelib::OK_TEXT, false, true);
+void btelib::resetModule() {
+    writeln("AT+RESET", true);
+    waitForResponse(btelib::OK_TEXT, false, true);
 }
 
 // Get the firmware Version
 String getFirmVer() {
-    btelib::writeln("AT+VERSION");
+    writeln("AT+VERSION", false);
     return btelib::readln(true).remove(0.9);   //CHECK THIS----------------------------------------------------
 }
 
 // Set the name of the module
 bool setModuleName(String moduleName) {
-    btelib::writeln("AT+NAME" + moduleName, false);
-    return btelib::waitForResponse(btelib::OK_TEXT, false, true);
+    writeln("AT+NAME" + moduleName, false);
+    return waitForResponse(OK_TEXT, false, true);
 }
 
 // Get the name of the module
-String getModuleName() {
-    btelib::writeln("AT+NAME");
+String btelib::getModuleName() {
+    btelib::writeln("AT+NAME", false);
     return btelib::readln(true).remove(0,6);
 }
 
 // Get the state of the module
-byte getState() {
-    btelib::writeln("AT+STATE");
+byte btelib::getState() {
+    btelib::writeln("AT+STATE", true);
     String myString = btelib::readln(true);
     char myChar = myString.charAt(8);
     return (byte)myChar.toInt();

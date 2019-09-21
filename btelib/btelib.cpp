@@ -10,6 +10,7 @@ btelib::btelib(byte RxPin, byte TxPin) {
     _RxPin = RxPin;
     _TxPin = TxPin;
     SoftwareSerial bteSerial(_RxPin, _TxPin); // Tell which pins we will be using
+	OK_TEXT = "OK";	// The OK string
 }
 
 // Initialize our object
@@ -38,33 +39,35 @@ unsigned long btelib::getTimeout() {
 // Software Reset of the module
 void btelib::resetModule() {
     writeln("AT+RESET", true);
-    waitForResponse(btelib::OK_TEXT, false, true);
+    waitForResponse(OK_TEXT, false, true);
 }
 
 // Get the firmware Version
-String getFirmVer() {
+String btelib::getFirmVer() {
     writeln("AT+VERSION", false);
-    return btelib::readln(true).remove(0.9);   //CHECK THIS----------------------------------------------------
+	String myString = readln(true);
+	myString.remove(0.9);
+    return myString;
 }
 
 // Set the name of the module
-bool setModuleName(String moduleName) {
+bool btelib::setModuleName(String moduleName) {
     writeln("AT+NAME" + moduleName, false);
     return waitForResponse(OK_TEXT, false, true);
 }
 
 // Get the name of the module
 String btelib::getModuleName() {
-    btelib::writeln("AT+NAME", false);
-    return btelib::readln(true).remove(0,6);
+    writeln("AT+NAME", false);
+	String myString = readln(true);
+	myString.remove(0,6);
+    return myString;
 }
 
 // Get the state of the module
 byte btelib::getState() {
-    btelib::writeln("AT+STATE", true);
-    String myString = btelib::readln(true);
-    char myChar = myString.charAt(8);
-    return (byte)myChar.toInt();
+    writeln("AT+STATE", true);
+    return (byte)(readln(true).charAt(8) - '\x30');
 }
 
 // Wait for a response from the module
@@ -72,7 +75,7 @@ bool btelib::waitForResponse(String messageToWaitFor, bool caseSensitive, bool u
 	
     unsigned long startTime = millis();	// Used for determining the timeout if needed.
 
-    char currentChar = ' ';
+    char currentChar;
 
     // Get the length of our string
     int stringLength = messageToWaitFor.length();
@@ -84,7 +87,7 @@ bool btelib::waitForResponse(String messageToWaitFor, bool caseSensitive, bool u
     while (j != stringLength) {
 		
         do { 
-            currentChar = btelib::readChar();
+            currentChar = readChar();
 			
             // Now make sure that we do not run over the timeout delay if we are using it
             if (useTimeout && ((millis() - startTime) >= timeoutDelay) )
@@ -122,7 +125,7 @@ String btelib::readln(bool useTimeout) {
     String stringOut;
 
     do {
-        charIn = btelib::readChar();
+        charIn = readChar();
 
         if ((charIn == '\r') || (charIn == '\n'))
             break;
@@ -151,6 +154,6 @@ void btelib::writeChar(char characterToSend) {
 void btelib::writeln(String characterString, bool waitForOK) {
     bteSerial->println(characterString);
     if (waitForOK)
-        btelib::waitForResponse(btelib::OK_TEXT, false, true);
+        waitForResponse(OK_TEXT, false, true);
 }
 

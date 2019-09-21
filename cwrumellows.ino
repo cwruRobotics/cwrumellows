@@ -1,10 +1,7 @@
 //#include "btelib/btelib.h"
+#include <Servo.h>
 
 //btelib *bluetoothConnection;
-
-void setup() {
-//    btelib bluetoothConnection(2, 3); //Rx pin, Tx pin
-}
 
 enum BUTTONS {
     TOP = 'A',
@@ -19,6 +16,14 @@ enum BUTTONS {
 
 bool turningRight = false;
 bool turningLeft = false;
+
+Servo turntableServo;
+
+void setup() {
+    turntableServo.attach(9); //Pin 9????
+    
+//    btelib bluetoothConnection(2, 3); //Rx pin, Tx pin
+}
 
 void loop() {
 //    char input = bluetoothConnection->readChar();
@@ -54,6 +59,11 @@ void loop() {
         }
     }
 
-    //TODO:
+    //Untested!
     //if left, turn turntable left, etc.
+    if (turningLeft) {
+        turntableServo.write(180); //180 for full one way, 
+    }else if (turningRight) {
+        turntableServo.write(0); //0 for full speed the other way
+    }
 }

@@ -22,11 +22,25 @@ Servo turntableServo;
 void setup() {
     turntableServo.attach(9); //Pin 9????
 
+    turntableServo.write(100);
+
     bluetoothConnection.begin(9600);
+
+    Serial.println(bluetoothConnection.readln(true));
+
+    Serial.println(bluetoothConnection.areYouThere());
+
+    Serial.begin(115200);
+    while (!Serial);
+
+    Serial.println("Started");
 }
 
 void loop() {
     char input = bluetoothConnection.readChar();
+    Serial.print((int)input);
+    /*
+    Serial.println("running\n");
 
     if (input == '\x00'){
         //One button are released
@@ -56,13 +70,18 @@ void loop() {
             turningRight = false;
             turningLeft = false;
         }
-    }
+    }*/
 
     //Untested!
     //if left, turn turntable left, etc.
+    //100 is the middle
     if (turningLeft) {
-        turntableServo.write(180); //180 for full one way, 
+        turntableServo.write(110);
+        Serial.println("left");
     }else if (turningRight) {
-        turntableServo.write(0); //0 for full speed the other way
+        turntableServo.write(90);
+        Serial.println("right");
     }
+
+    delay(200);
 }

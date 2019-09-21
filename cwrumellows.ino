@@ -5,7 +5,7 @@ btelib *bluetoothConnection;
 void setup() {
     btelib bluetoothConnection(2, 3); //Rx pin, Tx pin
 }
-
+/*
 const enum BUTTONS {
     TOP = 'A',
     RIGHT,
@@ -27,3 +27,4 @@ void loop() {
         
     }
 }
+*/

@@ -24,7 +24,7 @@ class btelib {
 
 
         // Methods
-        void btelib::begin(unsigned long baudRate);	// Setup BAUD rate
+        void begin(unsigned long baudRate);	// Setup BAUD rate
         bool areYouThere(); // Get status (true = active)
 		
         void setTimeout(unsigned long timeoutDelayWanted);	// Timeout for waiting for response from module
@@ -35,16 +35,33 @@ class btelib {
 //        void restoreDefault();	// Reset the module to factory defaults
 //        String getModuleAddress();	// Returns the address of the module
         bool setModuleName(String moduleName);	// Set the name of the module
-//        String getModuleName();	// Get the name of the module
+        String getModuleName();	// Get the name of the module
 //        String getBlueDeviceName();	// Get the bluetooth device name
-        bool setModuleMode();	// Set the module mode 1=Master, 0=Slave, 2=Slave=Loop
+//        bool setModuleMode();	// Set the module mode 1=Master, 0=Slave, 2=Slave=Loop
 //        byte getModuleMode();	// Gets the module mode (see setModuleMode())
 
         char readChar();    // Read a character from the module
+        String readln(bool useTimeout); //Read a line from the module
         void writeChar(char characterToSend);   // Write a single character to the module
         void writeln(String characterString, bool waitForOK);   // Write line of characters to the module
+        byte getState();    // Get the state of the module
+
+        enum {
+            INITIALIZED = 1,
+            READY,
+            PAIRABLE,
+            PAIRED,
+            INQUIRING,
+            CONNECTING,
+            CONNECTED,
+            DISCONNECTED,
+            NUKNOW
+        };
+
+        bool waitForResponse(String messageToWaitFor, bool caseSensitive, bool useTimeout);
 
     private:
+        String OK_TEXT = "OK";
         byte _RxPin;	// Pins used for the serial port
         byte _TxPin;
         SoftwareSerial *bteSerial;	// Name of serial port object
@@ -52,9 +69,10 @@ class btelib {
         // Timeout delay for messages over the serial port
         unsigned long timeoutDelay = 500;
 		
-        bool waitForResponse(String messageToWaitFor, bool caseSensitive, bool useTimeout);
+        
 };
 
 #include "btelib.cpp"
 
 #endif
+

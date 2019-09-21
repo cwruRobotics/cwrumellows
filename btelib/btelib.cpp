@@ -31,9 +31,41 @@ void btelib::setTimeout(unsigned long timeoutDelayWanted) {
 }
 
 unsigned long btelib::getTimeout() {
-    return timeoutDelay;
+    return btelib::timeoutDelay;
 }
 
+
+// Software Reset of the module
+void resetModule() {
+    writeln("AT+RESET");
+    btelib::waitForResponse(OK_TEXT, false, true);
+}
+
+// Get the firmware Version
+String getFirmVer() {
+    btelib::writeln("AT+VERSION");
+    return btelib::readln().remove(0.9);   //CHECK THIS----------------------------------------------------
+}
+
+// Set the name of the module
+bool setModuleName(String moduleName) {
+    btelib::writeln("AT+NAME" + moduleName);
+    return btelib::waitForResponse(OK_TEXT, false, true);
+}
+
+// Get the name of the module
+String getModuleName() {
+    btelib::writeln("AT+NAME");
+    return btelib::readln().remove(0,6);
+}
+
+// Get the state of the module
+byte getState() {
+    btelib::writeln("AT+STATE");
+    return btelib::readln().remove(0,7);
+}
+
+// Wait for a response from the module
 bool btelib::waitForResponse(String messageToWaitFor, bool caseSensitive, bool useTimeout) {
 	
     unsigned long startTime = millis();	// Used for determining the timeout if needed.
@@ -55,7 +87,7 @@ bool btelib::waitForResponse(String messageToWaitFor, bool caseSensitive, bool u
             // Now make sure that we do not run over the timeout delay if we are using it
             if (useTimeout && ((millis() - startTime) >= timeoutDelay) )
                 return false;	//Hit the timeout, return false
-        } while (currentChar == \x00);
+        } while (currentChar == '\x00');
 		
         // If we don't case about the case, ignore it.
         if (!caseSensitive)
@@ -77,7 +109,35 @@ bool btelib::waitForResponse(String messageToWaitFor, bool caseSensitive, bool u
 char btelib::readChar() {
     char data = bteSerial->read(); 
    
-    return (data == -1) ? \x00 : data;
+    return (data == -1) ? '\x00' : data;
+}
+
+// Read a line from the module
+String btelib::readln(bool useTimeout) {
+    unsigned long startTime = millis();
+
+    char charIn;
+    String stringOut;
+
+    do {
+        charIn = btelib::readChar();
+
+        if ((charIn == '\r') || (charIn == '\n'))
+            break;
+
+        if (useTimeout && ((millis() - startTime) >= timeoutDelay))
+            return "";
+
+        if (charIn = 0)
+            continue;   // If no character is in buffer, check again
+        
+        // Append character to string
+        
+        stringOut += charIn;
+
+    } while ((charIn != '\r') && (charIn != '\n'));
+    
+    return stringOut;
 }
 
 // Send a character to the module
@@ -89,3 +149,4 @@ void btelib::writeChar(char characterToSend) {
 void btelib::writeln(String characterString, bool waitForOK) {
     bteSerial->println(characterString);
 }
+

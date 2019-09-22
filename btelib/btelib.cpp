@@ -157,3 +157,9 @@ void btelib::writeln(String characterString, bool waitForOK) {
         waitForResponse(OK_TEXT, false, true);
 }
 
+// Check serial port
+void btelib::checkPort() {
+	while(true) {
+		bteSerial->println("AT");
+	}
+}

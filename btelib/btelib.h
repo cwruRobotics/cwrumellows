@@ -60,7 +60,9 @@ class btelib {
 
         bool waitForResponse(String messageToWaitFor, bool caseSensitive, bool useTimeout);
 		
-
+		void checkPort();	// Check the port
+		
+		
     private:
 	    const String OK_TEXT;
         byte _RxPin;	// Pins used for the serial port
@@ -73,7 +75,6 @@ class btelib {
         
 };
 
-#include "btelib.cpp"
 
 #endif
 

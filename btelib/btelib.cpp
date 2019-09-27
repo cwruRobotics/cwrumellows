@@ -1,7 +1,6 @@
 // Bluetooth bodule driver library - v1
 // Zach Baldwin 2019
 
-#include "btelib.h"
 #include <SoftwareSerial.h>	// Needed for the serial port used to interface with the bluetooth module
 
 // Constructor, get the pins to be used for the serial port
@@ -112,9 +111,9 @@ bool btelib::waitForResponse(String messageToWaitFor, bool caseSensitive, bool u
 
 // Get a character from the module
 char btelib::readChar() {
-    char data = bteSerial->read(); 
+    char data = bteSerial->read();
    
-    return (data == -1) ? '\x00' : data;
+    return (data < 0) ? '\x00' : data;
 }
 
 // Read a line from the module

@@ -1,21 +1,9 @@
-#include "btelib/btelib.h"
+// #include "btelib/btelib.h"
 #include <Servo.h>
+#include <SoftwareSerial.h>
 
-// Bluetooth driver library
-btelib *bluetoothConnection; //Rx pin, Tx pin
+SoftwareSerial bteSerial(2, 3);
 
-// Pins used for software serial port
-#define RxPIN 2
-#define TxPIN 3
-
-// Default timeout for the BTE module's response
-#define D_TIMEOUT 500 // mS
-
-// Baudrates
-#define BTE_BAUD 9600  // Baudrate to communnicate with the BTE module
-#define SFT_BAUD 19200 // Baudrate for the serial debug port
-
-// Buttons and their corresponding meanings from the bluetooth module
 enum BUTTONS {
     TOP = 'A',
     RIGHT,
@@ -27,56 +15,35 @@ enum BUTTONS {
     SQUARE
 };
 
-// Misc Variable initialization
 bool turningRight = false;
 bool turningLeft = false;
 
-// Our servo objects
-#define SERVO_CENTER 100 // Center (STOP) value for the servos
+Servo turntableServo;
 
-Servo turntableServo;     // Create object for the servo controling the turntable
-#define TTSERVO_PIN 9  // Pin for controling the turn table servo
-
-
-// Now, setup everything...
 void setup() {
+    turntableServo.attach(9); //Pin 9????
 
-    // Setup the bluetooth module
-    btelib bluetoothConnection(RxPIN, TxPIN);
-    //bluetoothConnection.begin(BTE_BAUD);
+    turntableServo.write(90);
 
-    // Wait for the bluetooth module
-    //while (!bluetoothConnection.areYouThere()) {
-        // The first set of noop stuff...
-    //}
-    // Setup the servo connections
-    turntableServo.attach(TTSERVO_PIN); 
+    bteSerial.begin(9600);
 
-    // Center (or stop - for continuous rotation) the servos
-    turntableServo.write(SERVO_CENTER);
+    int now = millis();
+    while (millis() - now < 3000) {
 
-    // Setup our debug serial port
-    Serial.begin(SFT_BAUD);
-    while (!Serial) { // Wait for the serial port to be open
-        // Some sort of noop stuff...
     }
 
-    // Done initializing!
-    Serial.println("Started");
-    delay(200);
-    Serial.println("HELLO");
-    delay(200);
+    Serial.begin(115200);
+    while (!Serial);
 
+    Serial.println("Started");
 }
 
 void loop() {
-    delay(200);
-    // See if there are any characters from the BTE module
-    char inputChar = bluetoothConnection->readChar();
-
-    Serial.println(inputChar, HEX);
-
-    /*
+    char input = bteSerial.read();
+    if (input >= 0) {
+        Serial.print((int)input);
+    }
+    
     Serial.println("running\n");
 
     if (input == '\x00'){
@@ -113,12 +80,14 @@ void loop() {
     //if left, turn turntable left, etc.
     //100 is the middle
     if (turningLeft) {
-        turntableServo.write(110);
+       turntableServo.write(100);
         Serial.println("left");
     }else if (turningRight) {
-        turntableServo.write(90);
+       turntableServo.write(80);
         Serial.println("right");
+    }else {
+        turntableServo.write(90);
     }
-*/
+
     delay(200);
 }

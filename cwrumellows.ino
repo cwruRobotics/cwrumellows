@@ -94,6 +94,9 @@ void loop() {
             case TRIANGLE:
                 flywheel = true;
                 break;
+//            case CROSS:
+//                flywheelPower = 180; //"boost" AKA "SELF DESTRUCT"
+//                break;
             case CIRCLE:
                 if (actuatedTime == 0) {
                     actuator.write(150);
@@ -118,11 +121,11 @@ void loop() {
     if (turningLeft) {
         turntableServo.writeMicroseconds(TABLE_ZERO - 100);
        
-        Serial.println("left");
+//        Serial.println("left");
     }else if (turningRight) {
         turntableServo.writeMicroseconds(TABLE_ZERO + 100);
         
-        Serial.println("right");
+//        Serial.println("right");
     }else {
         turntableServo.write(TABLE_ZERO);
     }
@@ -150,7 +153,7 @@ void loop() {
         actuatedTime = 0;
     }else if (actuatedTime == 0) {
 //        Serial.println("Hi");
-        actuator.write(95);
+        actuator.write(93);
     }
  
     delay(100);

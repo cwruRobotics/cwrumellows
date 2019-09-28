@@ -17,10 +17,13 @@ enum BUTTONS {
 
 const int TABLE_ZERO = 1891;
 
+const int FLYWHEEL_MIN = 60;  //A relatively slow speed to jump to from 0 when the button is pressed
+const int FLYWHEEL_MAX = 70;
+
 bool turningRight = false;
 bool turningLeft = false;
 
-bool flywheel = false;
+int flywheelPower = 0;
 
 Servo turntableServo;
 
@@ -78,7 +81,7 @@ void loop() {
         //    If buttons are still pressed, we'll get a lower case letter soon and turn it back on
         turningRight = false;
         turningLeft = false;
-        flywheel = false;
+        flywheelPower = 0;
     }else {
         if (isLowerCase(input)) {
             input = input - 0x20;
@@ -92,7 +95,8 @@ void loop() {
                 turningRight = true;
                 break;
             case TRIANGLE:
-                flywheel = true;
+                Serial.println("Triangle pressed.");
+                flywheelPower = FLYWHEEL_MIN;
                 break;
 //            case CROSS:
 //                flywheelPower = 180; //"boost" AKA "SELF DESTRUCT"
@@ -131,13 +135,11 @@ void loop() {
     }
     
     /* --Flywheel-- */
-    //45 is off, 50 starts running
-    //50-100 is sane, up to 180
-    if (flywheel) {
-        leftMotor.write(60);
-    }else {
-        leftMotor.write(0);
+    if (flywheelPower > 0 && flywheelPower < FLYWHEEL_MAX) {
+        flywheelPower += 0.5;
     }
+
+    leftMotor.write(flywheelPower);
     
     /* --Actuator-- */
     //Wait 2 tenths of a second after we extend

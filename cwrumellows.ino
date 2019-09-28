@@ -15,6 +15,8 @@ enum BUTTONS {
     SQUARE
 };
 
+const int TABLE_ZERO = 1891;
+
 bool turningRight = false;
 bool turningLeft = false;
 
@@ -34,26 +36,28 @@ int actuatedTime = 0;
 void setup() {
     turntableServo.attach(8); //Pin 8-turntable
     
-//     leftMotor.attach(10); //Pin 10
+    leftMotor.attach(10); //Pin 10
     // rightMotor.attach(11); //Pin 11
 
-    // leftMotor.write(0);
+    leftMotor.write(0);
     
-    turntableServo.write(90);
+    turntableServo.write(TABLE_ZERO);
 
     actuator.attach(7);
     
     // TODO: Do we need this?
-    int now = millis();
-    while (millis() - now < 2000) {}
+//    int now = millis();
+    bteSerial.begin(9600);
+
+    while (!bteSerial);
 
     Serial.begin(115200);
     while (!Serial);
 
     Serial.println("Started");
     
-    bteSerial.begin(9600);
-    Serial.println(!!bteSerial);
+    
+//    Serial.println(!!bteSerial);
 }
 
 void loop() {
@@ -110,26 +114,26 @@ void loop() {
 
     /* --Turntable --*/
     //if left, turn turntable left, etc.
-    //90 is the middle
+    //TABLE_ZERO is the middle
     if (turningLeft) {
-        turntableServo.write(80);
+        turntableServo.writeMicroseconds(TABLE_ZERO - 100);
        
         Serial.println("left");
     }else if (turningRight) {
-        turntableServo.write(100);
+        turntableServo.writeMicroseconds(TABLE_ZERO + 100);
         
         Serial.println("right");
     }else {
-        turntableServo.write(90);
+        turntableServo.write(TABLE_ZERO);
     }
     
     /* --Flywheel-- */
     //45 is off, 50 starts running
     //50-100 is sane, up to 180
     if (flywheel) {
-//        leftMotor.write(50);
+        leftMotor.write(60);
     }else {
-//        leftMotor.write(0);
+        leftMotor.write(0);
     }
     
     /* --Actuator-- */

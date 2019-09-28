@@ -2,7 +2,7 @@
 #include <Servo.h>
 #include <SoftwareSerial.h>
 
-SoftwareSerial bteSerial(2, 3);
+SoftwareSerial bteSerial(2, 3); //Rx, Tx???
 
 enum BUTTONS {
     TOP = 'A',
@@ -18,24 +18,42 @@ enum BUTTONS {
 bool turningRight = false;
 bool turningLeft = false;
 
+bool flywheel = false;
+
 Servo turntableServo;
 
-void setup() {
-    turntableServo.attach(9); //Pin 9????
+Servo leftMotor;
+Servo rightMotor;
 
+Servo actuator;
+
+int actuatedTime = 0;
+//0 means not extended
+//Every tick, this timer is incrimented, until we pull it back.
+
+void setup() {
+    turntableServo.attach(8); //Pin 8-turntable
+    
+//     leftMotor.attach(10); //Pin 10
+    // rightMotor.attach(11); //Pin 11
+
+    // leftMotor.write(0);
+    
     turntableServo.write(90);
 
-    bteSerial.begin(9600);
-
+    actuator.attach(7);
+    
+    // TODO: Do we need this?
     int now = millis();
-    while (millis() - now < 3000) {
-
-    }
+    while (millis() - now < 2000) {}
 
     Serial.begin(115200);
     while (!Serial);
 
     Serial.println("Started");
+    
+    bteSerial.begin(9600);
+    Serial.println(!!bteSerial);
 }
 
 void loop() {
@@ -46,12 +64,17 @@ void loop() {
     
     Serial.println("running\n");
 
+    if (actuatedTime > 0) {
+        actuatedTime++;
+    }
+
     if (input == '\x00'){
         //One button are released
         //Set all buttons to false
         //    If buttons are still pressed, we'll get a lower case letter soon and turn it back on
         turningRight = false;
         turningLeft = false;
+        flywheel = false;
     }else {
         if (isLowerCase(input)) {
             input = input - 0x20;
@@ -63,6 +86,15 @@ void loop() {
                 break;
             case RIGHT: 
                 turningRight = true;
+                break;
+            case TRIANGLE:
+                flywheel = true;
+                break;
+            case CIRCLE:
+                if (actuatedTime == 0) {
+                    actuator.write(150);
+                    actuatedTime = 1;
+                }
                 break;
             default:
                 //Ignore button presses right now
@@ -76,18 +108,46 @@ void loop() {
         }
     }
 
-    //Untested!
+    /* --Turntable --*/
     //if left, turn turntable left, etc.
-    //100 is the middle
+    //90 is the middle
     if (turningLeft) {
-       turntableServo.write(100);
+        turntableServo.write(80);
+       
         Serial.println("left");
     }else if (turningRight) {
-       turntableServo.write(80);
+        turntableServo.write(100);
+        
         Serial.println("right");
     }else {
         turntableServo.write(90);
     }
-
-    delay(200);
+    
+    /* --Flywheel-- */
+    //45 is off, 50 starts running
+    //50-100 is sane, up to 180
+    if (flywheel) {
+//        leftMotor.write(50);
+    }else {
+//        leftMotor.write(0);
+    }
+    
+    /* --Actuator-- */
+    //Wait 2 tenths of a second after we extend
+    /*
+        -Extend (t=1)
+        -Wait 100ms
+        -t=2
+        -Wait 100ms
+        -t=3
+    */
+    if (actuatedTime == 4) {
+        actuator.write(80);
+        actuatedTime = 0;
+    }else if (actuatedTime == 0) {
+//        Serial.println("Hi");
+        actuator.write(95);
+    }
+ 
+    delay(100);
 }
